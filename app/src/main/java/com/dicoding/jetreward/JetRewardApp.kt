@@ -17,11 +17,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavType
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navArgument
 import com.dicoding.jetreward.ui.navigation.NavigationItem
 import com.dicoding.jetreward.ui.theme.JetRewardTheme
 import com.dicoding.jetreward.ui.navigation.Screen
 import com.dicoding.jetreward.ui.screen.cart.CartScreen
+import com.dicoding.jetreward.ui.screen.detail.DetailScreen
 import com.dicoding.jetreward.ui.screen.home.HomeScreen
 import com.dicoding.jetreward.ui.screen.profile.ProfileScreen
 
@@ -42,13 +45,32 @@ fun JetRewardApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    navigateToDetail = { rewardId ->
+                        navController.navigate(Screen.DetailReward.createRoute(rewardId))
+                    }
+                )
             }
             composable(Screen.Cart.route) {
                 CartScreen()
             }
             composable(Screen.Profile.route) {
                 ProfileScreen()
+            }
+            composable(
+                route = Screen.DetailReward.route,
+                arguments = listOf(navArgument("rewardId") { type = NavType.LongType }),
+            ) {
+                val id = it.arguments?.getLong("rewardId") ?: -1L
+                DetailScreen(
+                    rewardId = id,
+                    navigateBack = {
+                    navController.navigateUp()
+                    },
+                    navigateToCart = {
+
+                    }
+                )
             }
         }
     }
